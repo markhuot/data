@@ -1,0 +1,19 @@
+{
+    "name": "markhuot/data-object",
+    "authors": [
+        {
+            "name": "Mark Huot",
+            "email": "mark@markhuot.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "markhuot\\data\\": "./src"
+        }
+    },
+    "require": {
+        "pestphp/pest": "^1.22",
+        "illuminate/collections": "^9.36",
+        "phpdocumentor/reflection-docblock": "^5.3"
+    }
+}
