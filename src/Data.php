@@ -9,7 +9,7 @@ use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\ContextFactory;
 use phpDocumentor\Reflection\Types\Object_;
 
-class DataObject
+class Data
 {
     function __construct(array $data = [])
     {
