@@ -43,23 +43,23 @@ class Repository {
 That will pull the `full_name` field from the source and drop it in to the `->fullName` property in the destination. If your conversion is snake case to camel case there is a convient helper to do just that,
 
 ```php
-use markhuot\data\attributes\MapFromCamel;
+use markhuot\data\attributes\MapCase;
 
 class Repository {
     public int $id;
     public string $name;
 
-    #[MapFromCamel]
+    #[MapCase(from: MapCase::SNAKE, to: MapCase::CAMEL)]
     public string $fullName;
 }
 ```
 
-If you find yourself using `MapFromCamel` several times over you can also apply the attribute to the class to have all property names converted in the same way,
+If you find yourself using `MapCase` several times over you can also apply the attribute to the class to have all property names converted in the same way,
 
 ```php
-use markhuot\data\attributes\MapFromCamel;
+use markhuot\data\attributes\MapCase;
 
-#[MapFromCamel]
+#[MapCase(from: MapCase::SNAKE, to: MapCase::CAMEL)]
 class Repository {
     public int $id;
     public string $name;
@@ -74,7 +74,6 @@ In example all fields in the `Repository` class will be converted during transfo
 By default nested properties will be mapped based on the type hint. The typehit can either come from PHP or the docblock depending on your needs. For single object nesting you can use native PHP type hints like this,
 
 ```php
-#[MapFromCamel]
 class Repository {
     public int $id;
     public string $name;
@@ -84,7 +83,6 @@ class Repository {
     public bool $private;
 }
 
-#[MapFromCamel]
 class Owner {
     public int $id;
     public string $login;
@@ -97,7 +95,6 @@ This will map the source data `['owner' => ['id' => 1, 'login' => 'foo']]` over 
 For more advanced mappings you can use a docblock to define properties that PHP doesn't yet understand. For example,
 
 ```php
-#[MapFromCamel]
 class Release {
     public int $id;
     public string $tagName;
@@ -106,7 +103,6 @@ class Release {
     public array $assets;
 }
 
-#[MapFromCamel]
 class Asset {
     public int $id;
     public string $name;
