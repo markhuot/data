@@ -10,7 +10,7 @@ class MapCase implements MapFromInterface
 {
     const CAMEL = 'camel';
     const SNAKE = 'snake';
-    const KEBAB = 'Kebab';
+    // const KEBAB = 'Kebab';
 
     function __construct(
         protected string $from,
@@ -36,9 +36,9 @@ class MapCase implements MapFromInterface
         if ($this->from === static::CAMEL) {
             return (string)u($intermediate)->camel();
         }
-        if ($this->from === static::KEBAB) {
-            return (string)u($intermediate)->kebab();
-        }
+        // if ($this->from === static::KEBAB) {
+        //     return (string)u($intermediate)->kebab();
+        // }
 
         return null;
     }
