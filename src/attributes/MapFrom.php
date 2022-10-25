@@ -28,9 +28,9 @@ class MapFrom implements MapFromInterface
         return $this->key ?? $property->getName();
     }
 
-    protected function mapCase(\ReflectionProperty $property)
+    protected function mapCase(\ReflectionProperty $property): ?string
     {
-        $propertyName = $property->getName();
+        $propertyName = $property->getName() ?? '';
 
         $intermediate = $propertyName;
         $intermediate = preg_replace('/([^a-z])/i', ' ', $intermediate);
