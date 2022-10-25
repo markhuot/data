@@ -28,7 +28,7 @@ test('maps specific fields', function () {
 });
 
 class AttrOnProperty {
-    #[MapCase(from: MapCase::SNAKE, to: MapCase::CAMEL)]
+    #[MapFrom(MapFrom::SNAKE)]
     public $camelCased;
 }
 test('snake case mapping on property', function () {
@@ -38,7 +38,7 @@ test('snake case mapping on property', function () {
 });
 
 class CamelAttrOnProperty {
-    #[MapCase(from: MapCase::CAMEL, to: MapCase::SNAKE)]
+    #[MapFrom(MapFrom::CAMEL)]
     public $snake_cased;
 }
 test('camel case mapping on property', function () {
@@ -47,7 +47,7 @@ test('camel case mapping on property', function () {
     expect($foo)->snake_cased->toBe('bar');
 });
 
-#[MapCase(from: MapCase::SNAKE, to: MapCase::CAMEL)]
+#[MapFrom(MapFrom::SNAKE)]
 class AttrOnClass {
     public $camelCased;
 }

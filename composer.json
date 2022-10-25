@@ -17,8 +17,10 @@
         "pestphp/pest": "^1.22",
         "illuminate/collections": "^9.36",
         "phpdocumentor/reflection-docblock": "^5.3",
-        "symfony/validator": "^6.1",
-        "symfony/string": "^6.1"
+        "symfony/validator": "^5|^6.1",
+        "symfony/string": "^5|^6.1",
+        "doctrine/annotations": "^1.13",
+        "symfony/cache": "^6.0"
     },
     "config": {
         "allow-plugins": {

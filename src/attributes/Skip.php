@@ -7,7 +7,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_PROPERTY)]
 class Skip implements MapFromInterface
 {
-    function mapFrom(string $propertyName): ?string
+    function mapFrom(\ReflectionProperty $property): ?string
     {
         return null;
     }

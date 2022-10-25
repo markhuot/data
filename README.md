@@ -40,26 +40,26 @@ class Repository {
 }
 ```
 
-That will pull the `full_name` field from the source and drop it in to the `->fullName` property in the destination. If your conversion is snake case to camel case there is a convient helper to do just that,
+That will pull the `full_name` field from the source and drop it in to the `->fullName` property in the destination. If your conversion is snake case to camel case there is a convent helper to do just that,
 
 ```php
-use markhuot\data\attributes\MapCase;
+use markhuot\data\attributes\MapFrom;
 
 class Repository {
     public int $id;
     public string $name;
 
-    #[MapCase(from: MapCase::SNAKE, to: MapCase::CAMEL)]
+    #[MapFrom(MapFrom::SNAKE)]
     public string $fullName;
 }
 ```
 
-If you find yourself using `MapCase` several times over you can also apply the attribute to the class to have all property names converted in the same way,
+If you find yourself using identical `MapFrom` annotations several times over you can also apply the attribute to the class to have all property names converted in the same way,
 
 ```php
-use markhuot\data\attributes\MapCase;
+use markhuot\data\attributes\MapFrom;
 
-#[MapCase(from: MapCase::SNAKE, to: MapCase::CAMEL)]
+#[MapFrom(MapFrom::SNAKE)]
 class Repository {
     public int $id;
     public string $name;

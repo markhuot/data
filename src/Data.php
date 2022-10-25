@@ -51,7 +51,7 @@ class Data
             $attributeInstance = $attribute->newInstance();
             $reflect = new \ReflectionClass($attributeInstance);
             if ($reflect->implementsInterface(MapFromInterface::class)) {
-                return $attributeInstance->mapFrom($propertyName);
+                return $attributeInstance->mapFrom($property);
             }
         }
 
@@ -61,7 +61,7 @@ class Data
             $attributeInstance = $attribute->newInstance();
             $reflect = new \ReflectionClass($attributeInstance);
             if ($reflect->implementsInterface(MapFromInterface::class)) {
-                return $attributeInstance->mapFrom($propertyName);
+                return $attributeInstance->mapFrom($property);
             }
         }
 
