@@ -1,7 +1,7 @@
 <?php
 
 use markhuot\data\attributes\MapFrom;
-use markhuot\data\attributes\MapFromCamel;
+use markhuot\data\attributes\MapCase;
 use markhuot\data\attributes\Skip;
 use markhuot\data\Data;
 use markhuot\data\DataObject;
@@ -28,7 +28,7 @@ test('maps specific fields', function () {
 });
 
 class AttrOnProperty {
-    #[MapFromCamel]
+    #[MapCase(from: MapCase::SNAKE, to: MapCase::CAMEL)]
     public $camelCased;
 }
 test('snake case mapping on property', function () {
@@ -37,7 +37,17 @@ test('snake case mapping on property', function () {
     expect($foo)->camelCased->toBe('bar');
 });
 
-#[MapFromCamel]
+class CamelAttrOnProperty {
+    #[MapCase(from: MapCase::CAMEL, to: MapCase::SNAKE)]
+    public $snake_cased;
+}
+test('camel case mapping on property', function () {
+    $foo = (new Data(new CamelAttrOnProperty))->fill(['snakeCased' => 'bar'])->get();
+
+    expect($foo)->snake_cased->toBe('bar');
+});
+
+#[MapCase(from: MapCase::SNAKE, to: MapCase::CAMEL)]
 class AttrOnClass {
     public $camelCased;
 }
