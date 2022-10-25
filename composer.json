@@ -1,5 +1,7 @@
 {
     "name": "markhuot/data-object",
+    "description": "Data objects",
+    "license": "GPL",
     "authors": [
         {
             "name": "Mark Huot",
