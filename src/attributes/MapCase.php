@@ -39,5 +39,7 @@ class MapCase implements MapFromInterface
         if ($this->from === static::KEBAB) {
             return (string)u($intermediate)->kebab();
         }
+
+        return null;
     }
 }
