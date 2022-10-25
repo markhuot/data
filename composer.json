@@ -15,7 +15,7 @@
     },
     "require": {
         "pestphp/pest": "^1.22",
-        "illuminate/collections": "^9.36",
+        "illuminate/collections": "^8|^9.36",
         "phpdocumentor/reflection-docblock": "^5.3",
         "symfony/validator": "^5|^6.1",
         "symfony/string": "^5|^6.1",

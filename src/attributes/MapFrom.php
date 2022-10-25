@@ -30,11 +30,11 @@ class MapFrom implements MapFromInterface
 
     protected function mapCase(\ReflectionProperty $property): ?string
     {
-        $propertyName = $property->getName() ?? '';
+        $propertyName = $property->getName();
 
         $intermediate = $propertyName;
-        $intermediate = preg_replace('/([^a-z])/i', ' ', $intermediate);
-        $intermediate = preg_replace('/([A-Z])/', ' $1', $intermediate);
+        $intermediate = preg_replace('/([^a-z])/i', ' ', $intermediate) ?? '';
+        $intermediate = preg_replace('/([A-Z])/', ' $1', $intermediate) ?? '';
 
         if ($this->key === static::SNAKE) {
             return (string)u($intermediate)->snake();
