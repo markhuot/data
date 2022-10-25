@@ -1,7 +1,7 @@
 {
     "name": "markhuot/data-object",
     "description": "Data objects",
-    "license": "GPL",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Mark Huot",
