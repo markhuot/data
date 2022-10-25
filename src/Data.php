@@ -9,16 +9,21 @@ use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\ContextFactory;
 use phpDocumentor\Reflection\Types\Object_;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
+use ReflectionNamedType;
 use Symfony\Component\Validator\Validation;
 
 class Data
 {
     function __construct(
-        protected mixed $obj,
+        protected object $obj,
     ) {
     }
 
-    function fill(array $data = [])
+    /**
+     * @param Array<mixed> $data
+     */
+    function fill(array $data = []): self
     {
         $reflect = new \ReflectionClass($this->obj);
         $properties = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC);
@@ -36,30 +41,34 @@ class Data
         return $this;
     }
 
-    protected function mapKey(\ReflectionProperty $property)
+    protected function mapKey(\ReflectionProperty $property): ?string
     {
         $propertyName = $property->getName();
 
         // Check if the property has an attribute that remaps the source
         foreach ($property->getAttributes() as $attribute) {
-            $reflect = new \ReflectionClass($attribute->newInstance());
+            /** @var MapFromInterface $attributeInstance */
+            $attributeInstance = $attribute->newInstance();
+            $reflect = new \ReflectionClass($attributeInstance);
             if ($reflect->implementsInterface(MapFromInterface::class)) {
-                return $attribute->newInstance()->mapFrom($propertyName);
+                return $attributeInstance->mapFrom($propertyName);
             }
         }
 
         // Check if the class has an attribute that remaps all source properties
         foreach ($property->getDeclaringClass()->getAttributes() as $attribute) {
-            $reflect = new \ReflectionClass($attribute->newInstance());
+            /** @var MapFromInterface $attributeInstance */
+            $attributeInstance = $attribute->newInstance();
+            $reflect = new \ReflectionClass($attributeInstance);
             if ($reflect->implementsInterface(MapFromInterface::class)) {
-                return $attribute->newInstance()->mapFrom($propertyName);
+                return $attributeInstance->mapFrom($propertyName);
             }
         }
 
         return $property->getName();
     }
 
-    protected function mapValue(\ReflectionProperty $property, mixed $value)
+    protected function mapValue(\ReflectionProperty $property, mixed $value): mixed
     {
         if ($commentType = $this->parseDocBlockForType($property)) {
             [$type, $isArray, $isOptional] = $commentType;
@@ -75,7 +84,7 @@ class Data
             $isOptional = false;
         }
 
-        if ($isArray) {
+        if ($isArray && is_array($value)) {
             return array_map(function ($item) use ($type, $isOptional) {
                 return $this->mapValueItem($type, $isOptional, $item);
             }, $value);
@@ -84,14 +93,14 @@ class Data
         return $this->mapValueItem($type, $isOptional, $value);
     }
 
-    protected function mapValueItem(string|null $type, bool $isOptional, mixed $value)
+    protected function mapValueItem(string|null $type, bool $isOptional, mixed $value): mixed
     {
         if ($isOptional && $value === null) {
             return $value;
         }
 
         if ($type) {
-            if (class_exists($type)) {
+            if (class_exists($type) && is_array($value)) {
                 $reflect = new \ReflectionClass($type);
                 return (new self($reflect->newInstance()))->fill($value)->validate()->get();
             }
@@ -109,17 +118,20 @@ class Data
             return $value === '1' || $value === 'true' || $value === 1 || $value === true;
         }
 
-        if ($type === 'int') {
+        if ($type === 'int' && is_numeric($value)) {
             return (int)$value;
         }
 
-        if ($type === 'float') {
+        if ($type === 'float' && is_numeric($value)) {
             return (float)$value;
         }
 
         return $value;
     }
 
+    /**
+     * @return ?array{0: ?string, 1: bool, 2: bool}
+     */
     protected function parseDocBlockForType(\ReflectionProperty $property)
     {
         $type = null;
@@ -131,12 +143,16 @@ class Data
             $contextFactory = new ContextFactory();
             $reflect = DocBlockFactory::createInstance()->create($property, $contextFactory->createFromReflector($property));
             if ($reflect->hasTag('var')) {
+                /** @var Var_ $var */
                 $var = $reflect->getTagsByName('var')[0];
-                if (is_a($var->getType(), Array_::class)) {
+                $varType = $var->getType();
+                if ($varType && is_a($varType, Array_::class)) {
                     $isArray = true;
-                    $var = $var->getType()->getValueType();
+                    /** @var Array_ $varType */
+                    $var = $varType->getValueType();
                 }
                 if (is_a($var, Object_::class)) {
+                    /** @var Object_ $var */
                     $type = (string)$var->getFqsen();
                 }
             }
@@ -149,14 +165,17 @@ class Data
         return null;
     }
 
+    /**
+     * @return ?array{0: ?string, 1: bool, 2: bool}
+     */
     protected function parsePhpForType(\ReflectionProperty $property)
     {
         $type = null;
         $isArray = false;
         $isOptional = false;
 
-        if (!empty($property->getType())) {
-            $phpType = $property->getType();
+        $phpType = $property->getType();
+        if (!empty($phpType) && is_a($phpType, ReflectionNamedType::class)) {
             $phpTypeName = $phpType->getName();
             $isOptional = $phpType->allowsNull();
 
@@ -178,18 +197,18 @@ class Data
         return null;
     }
 
-    function validate()
+    function validate(): self
     {
         $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
         $errors = $validator->validate($this->obj);
         if (count($errors)) {
-            throw new ValidationException($errors);
+            throw (new ValidationException())->setViolations($errors);
         }
 
         return $this;
     }
 
-    function get()
+    function get(): mixed
     {
         return $this->obj;
     }

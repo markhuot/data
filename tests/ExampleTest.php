@@ -4,7 +4,6 @@ use markhuot\data\attributes\MapFrom;
 use markhuot\data\attributes\MapFromCamel;
 use markhuot\data\attributes\Skip;
 use markhuot\data\Data;
-use markhuot\data\DataInterface;
 use markhuot\data\DataObject;
 use markhuot\data\exceptions\ValidationException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -57,11 +56,11 @@ test('mapping via subclass', function () {
     expect($foo)->camelCased->toBe('bar');
 });
 
-class ParentClass implements DataInterface {
+class ParentClass {
     /** @var ChildClass[] */
     public array $children;
 }
-class ChildClass implements DataInterface {
+class ChildClass {
     public string $name;
 }
 test('mapping nested objects', function () {

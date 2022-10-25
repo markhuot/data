@@ -2,15 +2,22 @@
 
 namespace markhuot\data\exceptions;
 
-use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ValidationException extends \Exception
 {
-    protected ConstraintViolationList $violations;
+    protected ConstraintViolationListInterface $violations;
 
-    function __construct(ConstraintViolationList $violations, ...$attr)
+    function setViolations(ConstraintViolationListInterface $violations): self
     {
         $this->violations = $violations;
-        parent::__construct(...$attr);
+
+        return $this;
     }
+
+    function getViolations(): ConstraintViolationListInterface
+    {
+        return $this->violations;
+    }
+    
 }
