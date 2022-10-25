@@ -4,23 +4,36 @@ namespace markhuot\data;
 
 use Illuminate\Support\Arr;
 use markhuot\data\attributes\MapFromInterface;
+use markhuot\data\exceptions\ValidationException;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\ContextFactory;
 use phpDocumentor\Reflection\Types\Object_;
+use Symfony\Component\Validator\Validation;
 
 class Data
 {
-    function __construct(array $data = [])
+    function __construct(
+        protected mixed $obj,
+    ) {
+    }
+
+    function fill(array $data = [])
     {
-        $reflect = new \ReflectionClass($this);
+        $reflect = new \ReflectionClass($this->obj);
         $properties = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC);
 
         foreach ($properties as $property) {
             $key = $this->mapKey($property);
+            if ($key === null) {
+                continue;
+            }
+            
             $value = Arr::get($data, $key, $property->getDefaultValue());
-            $this->{$property->getName()} = $this->mapValue($property, $value);
+            $this->obj->{$property->getName()} = $this->mapValue($property, $value);
         }
+
+        return $this;
     }
 
     protected function mapKey(\ReflectionProperty $property)
@@ -80,9 +93,7 @@ class Data
         if ($type) {
             if (class_exists($type)) {
                 $reflect = new \ReflectionClass($type);
-                if ($reflect->isSubclassOf(self::class)) {
-                    return $reflect->newInstance($value);
-                }
+                return (new self($reflect->newInstance()))->fill($value)->validate()->get();
             }
         }
 
@@ -165,5 +176,21 @@ class Data
         }
 
         return null;
+    }
+
+    function validate()
+    {
+        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        $errors = $validator->validate($this->obj);
+        if (count($errors)) {
+            throw new ValidationException($errors);
+        }
+
+        return $this;
+    }
+
+    function get()
+    {
+        return $this->obj;
     }
 }

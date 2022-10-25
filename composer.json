@@ -14,6 +14,12 @@
     "require": {
         "pestphp/pest": "^1.22",
         "illuminate/collections": "^9.36",
-        "phpdocumentor/reflection-docblock": "^5.3"
+        "phpdocumentor/reflection-docblock": "^5.3",
+        "symfony/validator": "^6.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
