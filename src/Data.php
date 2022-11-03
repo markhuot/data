@@ -33,9 +33,16 @@ class Data
             if ($key === null) {
                 continue;
             }
-            
+
             $value = Arr::get($data, $key, $property->getDefaultValue());
-            $this->obj->{$property->getName()} = $this->mapValue($property, $value);
+            $value = $this->mapValue($property, $value);
+            $setMethod = 'set'.ucfirst($property->getName());
+            if (method_exists($this->obj, $setMethod)) {
+                $this->obj->$setMethod($value);
+            }
+            else {
+                $this->obj->{$property->getName()} = $value;
+            }
         }
 
         return $this;
